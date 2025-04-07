@@ -1,0 +1,30 @@
+<launch>
+  <!-- <node name="usb_cam" pkg="usb_cam" type="usb_cam_node" output="screen" >
+    <param name="video_device" value="/dev/video0" />
+    <param name="image_width" value="640" />
+    <param name="image_height" value="480" />
+    <param name="pixel_format" value="yuyv" />
+    <param name="camera_frame_id" value="usb_cam" />
+    <param name="io_method" value="mmap"/>
+  </node> -->
+
+  <param name="yolov5_path"       value="/home/rui27/yolov5"/>
+  <param name="use_cpu"           value="false" />
+
+  <!-- Start yolov5 and ros wrapper -->
+  <node pkg="yolov5_ros" name="detect_ros" type="detect_ros.py" output="screen" >
+    <param name="weight_path"       value="/home/rui27/yolov5/yolov5s.pt"/>
+    <param name="image_topic"       value="/camera/color/image_raw" />
+    <param name="pub_topic"         value="/yolov5/targets" />
+    <param name="conf"              value="0.3" />
+  </node>
+  <!-- 使用launch-prefix让rqt_image_view比yolov5_detector晚三秒启动，因为yolov5启动比较慢 -->
+  <node
+      pkg="rqt_image_view"
+      type="rqt_image_view"
+      name="rqt_image_view"
+      launch-prefix="bash -c 'sleep 7; $0 $@'"
+      output="screen"
+  />
+</launch>
+

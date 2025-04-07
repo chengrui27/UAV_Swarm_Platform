@@ -1,0 +1,19 @@
+source devel/setup.bash
+
+运行px4仿真
+roslaunch px4 mavros_posix_sitl.launch
+
+运行vins
+rosrun vins vins_node ~/uav_ws/src/VINS-Fusion/config/realsense_d435i/realsense_stereo_imu_config.yaml
+
+运行地面站API
+rosrun offboard_run offboard_run_node
+
+运行rviz查看vins路径
+roslaunch vins vins_rviz.launch
+
+运行yolov5
+roslaunch yolov5_ros detect_ros.launch
+
+运行跟踪算法
+rosrun target_track target_track_node
