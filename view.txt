@@ -1,0 +1,2 @@
+watch -n 1 nvidia-smi  查看gpu占用率
+top  查看cpu占用率

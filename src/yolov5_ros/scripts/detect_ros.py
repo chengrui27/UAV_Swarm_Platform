@@ -14,6 +14,7 @@ from geometry_msgs.msg import Twist
 from sensor_msgs.msg import Image, RegionOfInterest
 from yolov5_ros.msg import BoundingBox, BoundingBoxes
 
+
 class Yolov5Param:
     def __init__(self):
         # load local repository(YoloV5:v6.0)
@@ -68,6 +69,10 @@ def image_cb(msg, cv_bridge, yolov5_param, color_classes, image_pub):
         bounding_box.num = np.int16(len(boxs))
         # box[-1]是目标的类型名，比如person
         bounding_box.Class = box[-1]
+
+        # 只检测行人(减少检测框的数量，以减轻目标跟踪节点回调函数的负担)
+        if bounding_box.Class != "person":
+            continue
         
         # 放入box队列中
         bounding_boxes.bounding_boxes.append(bounding_box)
@@ -88,6 +93,7 @@ def image_cb(msg, cv_bridge, yolov5_param, color_classes, image_pub):
             text_pos_y = box[1] - 10    
         cv2.putText(cv_image, box[-1],
                     (int(box[0]), int(text_pos_y)-10), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (255, 255, 255), 2, cv2.LINE_AA)    
+
 
     # 发布目标数据，topic为：/yolov5/targets
     # 可以使用命令查看：rotopic echo /yolov5/targets
